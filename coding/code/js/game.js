@@ -9,6 +9,12 @@ const key = {
     }
 }
 
+// 수리검 배열
+const bulletComProp = {
+    launch: false,
+    arr: []
+}
+
 const gameProp = {
     screenWidth : window.innerWidth,
     screenHeight : window.innerHeight
@@ -17,7 +23,11 @@ const gameProp = {
 
 const renderGame = () => {
     hero.keyMotion();
-    window.requestAnimationFrame(renderGame);    
+    
+    bulletComProp.arr.forEach((arr, i) => {
+        arr.moveBullet();
+    })
+    window.requestAnimationFrame(renderGame);        
 }
 
 const windowEvent = () => {
