@@ -1,13 +1,63 @@
+class Stage {
+    constructor() {
+        this.level = 0;
+        this.isStart = false;
+        this.stageStart();
+    }
+    stageStart() {
+        setTimeout(() => {
+            this.isStart = true;
+            this.stageGuide(`START LEVEL${this.level+1}`);
+            this.callMonster();
+        }, 2000)        
+    }
+    stageGuide(text) {
+        this.parentNode = document.querySelector('.game_app');
+        this.textBox = document.createElement('div');
+        this.textBox.className = 'stage_box';
+        this.textNode = document.createTextNode(text);
+        this.textBox.appendChild(this.textNode);
+        this.parentNode.appendChild(this.textBox);
+
+        setTimeout(()=> this.textBox.remove(), 1500);
+    }
+    callMonster() {
+        for(let i=0; i<= 10; i++) {
+            if(i === 10) {                
+                allMonsterComProp.arr[i] = new Monster(stageInfo.monster[this.level].bossMon, hero.movex + gameProp.screenWidth + 600 * i);      
+            } else {
+                allMonsterComProp.arr[i] = new Monster(stageInfo.monster[this.level].defaultMon, hero.movex + gameProp.screenWidth + 700 * i); 
+            }
+           
+        }
+    }
+    clearCheck() {
+        if (allMonsterComProp.arr.length === 0 && this.isStart) {
+            this.stageGuide('Clear!')
+            this.isStart = false;            
+            this.level ++;
+            if(this.level < stageInfo.monster.length) {
+                this.stageStart();
+            } else {
+                this.stageGuide('All Clear!')
+            }
+            
+        }
+    }
+
+}
+
 class Hero {
     constructor(el) {
         this.el = document.querySelector(el);
         this.movex = 0;
         this.speed = 11;
         this.direction = 'right';
-        this.attackDamage = 1000;
+        this.attackDamage = 1110000;
         this.hpProgress = 0;
-        this.hpValue = 10000;
+        this.hpValue = 5110000;
         this.defaultHpValue = this.hpValue;
+        this.realDamage = 0;
 
         // console.log(window.innerHeight)
         // console.log(this.el.getBoundingClientRect().top)
@@ -88,6 +138,9 @@ class Hero {
         this.el.classList.add('dead');        
         endGame();
     }
+    hitDamage() {
+        this.realDamage = this.attackDamage - Math.round(Math.random() * this.attackDamage * 0.1);
+    }
 }
 
 class Bullet {
@@ -139,8 +192,10 @@ class Bullet {
         if (this.position().left > allMonsterComProp.arr[j].position().left && this.position().right < allMonsterComProp.arr[j].position().right) {
             for (let i = 0; i < bulletComProp.arr.length; i++) {
                 if (bulletComProp.arr[i] === this) {
+                    hero.hitDamage();
                     bulletComProp.arr.splice(i, 1);
                     this.el.remove();
+                    this.damageView(allMonsterComProp.arr[j]);
                     allMonsterComProp.arr[j].updateHp(j);
                 }
             }
@@ -156,26 +211,42 @@ class Bullet {
             }
         }
     }
+    damageView(monster) {
+        this.parentNode = document.querySelector('.game_app');
+        this.textDamageNode = document.createElement('div');
+        this.textDamageNode.className = 'text_damage';
+        this.textDamage = document.createTextNode(hero.realDamage);
+        this.textDamageNode.appendChild(this.textDamage);
+        this.parentNode.appendChild(this.textDamageNode);
+
+        let textPosition = Math.random() * -100;
+        let damagex = monster.position().left + textPosition;
+        let damagey = monster.position().top;
+
+        this.textDamageNode.style.transform = `translate(${damagex}px, ${-damagey}px)`
+        setTimeout(()=> this.textDamageNode.remove(), 500)
+        
+    }
 
 }
 
 class Monster {
-    constructor(positionX, hp) {
+    constructor(property, positionX) {        
         this.parentNode = document.querySelector('.game');
         this.el = document.createElement('div');
-        this.el.className = 'monster_box';
+        this.el.className = 'monster_box '+property.name;
         this.elChildren = document.createElement('div');
         this.elChildren.className = 'monster';
         this.hpNode = document.createElement('div');
         this.hpNode.className = 'hp';
-        this.hpValue = hp;
-        this.defaultHpValue = hp;
+        this.hpValue = property.hpValue;
+        this.defaultHpValue = property.hpValue;
         this.hpInner = document.createElement('span');        
         this.progress = 0;
         this.positionX = positionX;
         this.moveX = 0;
-        this.speed = 10;
-        this.crashDamage = 100;
+        this.speed = property.speed;
+        this.crashDamage = property.crashDamage;
 
 
         this.init()
@@ -197,7 +268,7 @@ class Monster {
         }
     }
     updateHp(index) {
-        this.hpValue = Math.max(0, this.hpValue - hero.attackDamage);
+        this.hpValue = Math.max(0, this.hpValue - hero.realDamage);
         this.progress = this.hpValue / this.defaultHpValue * 100;        
         this.el.children[0].children[0].style.width = this.progress + '%';
 
