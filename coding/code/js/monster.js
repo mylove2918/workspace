@@ -45,3 +45,11 @@ const pinkMonBoss = {
     crashDamage: 2500,
     score: 30000
 }
+
+const evePinkMonBoss = {
+    name: 'eve',
+    hpValue: 10000000,
+    speed: 2,
+    crashDamage: 5000,
+    score: 300000
+}

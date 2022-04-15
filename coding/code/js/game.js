@@ -31,6 +31,7 @@ const stageInfo = {
         {defaultMon: greenMon, bossMon: greenMonBoss},
         {defaultMon: yellowMon, bossMon: yellowMonBoss},
         {defaultMon: pinkMon, bossMon: pinkMonBoss},
+        {defaultMon: greenMon, bossMon: evePinkMonBoss},
     ],
 
 }
