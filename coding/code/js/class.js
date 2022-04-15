@@ -32,12 +32,13 @@ class Stage {
         }
     }
     clearCheck() {
-        if (allMonsterComProp.arr.length === 0 && this.isStart) {
-            this.stageGuide('Clear!')
+        if (allMonsterComProp.arr.length === 0 && this.isStart) {            
             this.isStart = false;            
             this.level ++;
             if(this.level < stageInfo.monster.length) {
+                this.stageGuide('Clear!')
                 this.stageStart();
+                hero.heroUpgrade();
             } else {
                 this.stageGuide('All Clear!')
             }
@@ -53,11 +54,15 @@ class Hero {
         this.movex = 0;
         this.speed = 11;
         this.direction = 'right';
-        this.attackDamage = 1110000;
+        this.attackDamage = 10000;
         this.hpProgress = 0;
-        this.hpValue = 5110000;
+        this.hpValue = 100000;
         this.defaultHpValue = this.hpValue;
         this.realDamage = 0;
+        this.slideSpeed = 14;
+        this.slideTime = 0;
+        this.slideMaxTime = 30;
+        this.slideDown = false;
 
         // console.log(window.innerHeight)
         // console.log(this.el.getBoundingClientRect().top)
@@ -77,7 +82,25 @@ class Hero {
             this.el.classList.remove('flip');
 
             this.movex = this.movex + this.speed;
+        } 
+
+        if(key.keyDown['slide']) {
+            if (!this.slideDown) {
+                this.el.classList.add('slide');
+                if(this.direction === 'right') {
+                    this.movex = this.movex + this.slideSpeed;
+                } else {
+                    this.movex = this.movex - this.slideSpeed;
+                }
+    
+                if(this.slideTime > this.slideMaxTime) {
+                    this.el.classList.remove('slide');
+                    this.slideDown = true;
+                }
+                this.slideTime += 1;
+            }            
         }
+
 
         if (key.keyDown['attack']) {
             if (!bulletComProp.launch) {
@@ -95,6 +118,12 @@ class Hero {
         if (!key.keyDown['attack']) {
             this.el.classList.remove('attack')
             bulletComProp.launch = false
+        }
+
+        if (!key.keyDown['slide']) {
+            this.el.classList.remove('slide')
+            this.slideDown = false;
+            this.slideTime = 0;
         }
 
         this.el.parentNode.style.transform = `translateX(${this.movex}px)`;
@@ -140,6 +169,10 @@ class Hero {
     }
     hitDamage() {
         this.realDamage = this.attackDamage - Math.round(Math.random() * this.attackDamage * 0.1);
+    }
+    heroUpgrade() {
+        this.speed += 1.3;
+        this.attackDamage += 15000;
     }
 }
 
@@ -247,6 +280,7 @@ class Monster {
         this.moveX = 0;
         this.speed = property.speed;
         this.crashDamage = property.crashDamage;
+        this.score = property.score;
 
 
         this.init()
@@ -283,6 +317,7 @@ class Monster {
             this.el.remove();
         }, 200)        
         allMonsterComProp.arr.splice(index, 1)        
+        this.setScore();
     }
     moveMonster() {       
 
@@ -303,5 +338,9 @@ class Monster {
         if(hero.position().right-rightDiff > this.position().left && hero.position().left + leftDiff < this.position().right) {            
             hero.updateHp(this.crashDamage);
         }
+    }
+    setScore() {
+        stageInfo.totalScore += this.score;
+        document.querySelector('.score_box').innerText = stageInfo.totalScore;
     }
 }
