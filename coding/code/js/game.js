@@ -1,6 +1,7 @@
 const key = {
     keyDown : {},
     keyValue : {
+        13: 'enter',
         37: 'left',
         38: 'up',
         39: 'right',
@@ -31,7 +32,10 @@ const stageInfo = {
         {defaultMon: greenMon, bossMon: greenMonBoss},
         {defaultMon: yellowMon, bossMon: yellowMonBoss},
         {defaultMon: pinkMon, bossMon: pinkMonBoss},
-        {defaultMon: greenMon, bossMon: evePinkMonBoss},
+        // {defaultMon: greenMon, bossMon: evePinkMonBoss},
+    ],
+    callPosition: [
+        1000, 5000, 9000
     ],
 
 }
@@ -45,7 +49,9 @@ const gameProp = {
 
 const renderGame = () => {
     hero.keyMotion();
-    setGameBackground();    
+    setGameBackground();
+    
+    npcOne.crash();
     
     bulletComProp.arr.forEach((arr, i) => {        
         arr.moveBullet();
@@ -101,10 +107,12 @@ const loadImg = () => {
 }
 
 let hero;
+let npcOne;
 
 const init = () => {
     hero = new Hero('.hero');   
     stageInfo.stage = new Stage();    
+    npcOne = new Npc();
 
     loadImg();
     windowEvent();
