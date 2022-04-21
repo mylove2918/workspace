@@ -60,3 +60,12 @@ const evePinkMonBoss = {
     score: 300000,
     exp: 300000,
 }
+
+const zombieKing = {
+    name: 'zombie_king',
+    hpValue: 15200000,
+    speed: 9,
+    crashDamage: 4000,
+    score: 30000000,
+    exp: 500000,
+}
