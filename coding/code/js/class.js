@@ -88,28 +88,29 @@ class Stage {
     }
     clearCheck() {
         stageInfo.callPosition.forEach( arr => {            
-            if(hero.movex >= arr && allMonsterComProp.arr.length === 0) {
+            if(hero.movex >= arr && allMonsterComProp.arr.length === 0) {                
                 this.stageGuide('곧 몬스터가 몰려옵니다!!');
                 stageInfo.callPosition.shift();
 
                 setTimeout(()=> {
                     this.callMonster()
                     this.level++
-                }, 1000)
-                
-                
+                }, 1000)              
             }
         })
         // if (allMonsterComProp.arr.length === 0 && this.isStart) {            
         //     this.isStart = false;            
-        //     this.level ++;
-        //     if(this.level < stageInfo.monster.length) {
-        //         this.stageGuide('Clear!')
-        //         this.stageStart();
-        //         hero.heroUpgrade();
-        //     } else {
-        //         this.stageGuide('All Clear!')
-        //     }
+        //     // this.level ++;
+        //     if(!this.level < stageInfo.monster.length) {
+        //         this.stageGuide('All Clear! 사이버 세상을 마음껏 여행하세요.')
+        //     } 
+        //     // if(this.level < stageInfo.monster.length) {
+        //     //     this.stageGuide('Clear!')
+        //     //     this.stageStart();
+        //     //     hero.heroUpgrade();
+        //     // } else {
+        //     //     this.stageGuide('All Clear!')
+        //     // }
             
         // }
     }
